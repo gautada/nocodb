@@ -1,21 +1,12 @@
-ARG ALPINE_VERSION=latest
-FROM docker.io/gautada/alpine:$ALPINE_VERSION as build
 
-# ╭――――――――――――――――――――╮
-# │ BUILD              │
-# ╰――――――――――――――――――――╯
-ARG IMAGE_VERSION="0.10.0"
-RUN /bin/sed -i 's|dl-cdn.alpinelinux.org/alpine/|mirror.math.princeton.edu/pub/alpinelinux/|g' /etc/apk/repositories \
- && /sbin/apk add --no-cache ansible go go-task npm openssh-client-default
-WORKDIR /opt
-RUN git config --global advice.detachedHead false \
- && git config --global --add safe.directory /opt \
- && git clone --branch "v${IMAGE_VERSION}" --depth 1 https://github.com/nocodb/nocodb.git
-WORKDIR /opt/nocodb
- RUN /usr/bin/go-task deps \
- && /usr/bin/go-task build
+# RUN cp $GOPATH/bin/litestream /usr/src/lt
+# && git clone --branch "v${IMAGE_VERSION}" --depth 1 https://github.com/nocodb/nocodb.git
+# RUN git config --global advice.detachedHead false \
+#  && git config --global --add safe.directory /opt \
+#  && git clone --branch "v${IMAGE_VERSION}" --depth 1 https://github.com/nocodb/nocodb.git
+# WORKDIR /opt/nocodb
 
-FROM docker.io/gautada/alpine:$ALPINE_VERSION as container
+# FROM docker.io/gautada/alpine:$ALPINE_VERSION as container
 
 # ╭――――――――――――――――――――╮
 # │ USERS              │
