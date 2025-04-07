@@ -6,10 +6,10 @@
 #             The default template is kept in
 #             [gist](https://gist.github.com/gautada/f185700af585a50b3884ad10c2b02f98)
 
-container_version() {
- echo "0.0.0"
-}
 
-container_entrypoint() {
+
+
+
+
  tail -f /dev/null
-}
+
