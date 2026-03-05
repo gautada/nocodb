@@ -79,9 +79,8 @@ RUN /usr/sbin/usermod -l $USER debian \
 # │ APPLICATION        │
 # ╰――――――――――――――――――――╯
 # Copy the built nocodb docker bundle and production node_modules from the build stage.
-# /deploy is created by `pnpm deploy` and contains a flat, self-contained node_modules.
 COPY --from=builder /build/packages/nocodb/docker /usr/app/docker
-COPY --from=builder /deploy/node_modules /usr/app/node_modules
+COPY --from=builder /build/packages/nocodb/node_modules /usr/app/node_modules
 COPY --from=builder /build/packages/nocodb/package.json /usr/app/package.json
 
 # Create data directory for SQLite default backend and set ownership.
