@@ -29,9 +29,10 @@ RUN IMAGE_VERSION=$(curl -sL "https://api.github.com/repos/nocodb/nocodb/release
  && git clone --branch "$IMAGE_VERSION" --depth 1 \
       https://github.com/nocodb/nocodb.git .
 
-# Install all dependencies, build the nocodb package (includes frontend),
-# then prune to production-only dependencies.
+# Install all dependencies, build the SDK (required by the backend),
+# build the nocodb package (includes frontend), then prune to production-only dependencies.
 RUN pnpm install --frozen-lockfile \
+ && pnpm --filter nocodb-sdk build \
  && pnpm --filter nocodb build \
  && pnpm --filter nocodb install --prod --ignore-scripts
 
