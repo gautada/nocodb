@@ -10,6 +10,8 @@ ARG CONTAINER_VERSION=13.3
 # ╰――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――╯
 FROM node:20-bookworm AS builder
 
+ENV CI=true
+
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git jq curl python3 make g++ \
  && rm -rf /var/lib/apt/lists/*
