@@ -10,7 +10,8 @@ ARG CONTAINER_VERSION=13.3
 # ╰――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――╯
 FROM node:20-bookworm AS builder
 
-ENV CI=true
+ENV CI=true \
+    PNPM_NODE_LINKER=node-modules
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git jq curl python3 make g++ \
@@ -78,7 +79,7 @@ RUN /usr/sbin/usermod -l $USER debian \
 # ╭――――――――――――――――――――╮
 # │ APPLICATION        │
 # ╰――――――――――――――――――――╯
-# Copy the built nocodb dist and production node_modules from the build stage.
+# Copy the built nocodb docker bundle and production node_modules from the build stage.
 COPY --from=builder /build/packages/nocodb/docker /usr/app/docker
 COPY --from=builder /build/packages/nocodb/node_modules /usr/app/node_modules
 COPY --from=builder /build/packages/nocodb/package.json /usr/app/package.json
