@@ -36,7 +36,6 @@ RUN IMAGE_VERSION=$(curl -sL "https://api.github.com/repos/nocodb/nocodb/release
 RUN pnpm install --frozen-lockfile \
  && pnpm --filter nocodb-sdk build \
  && pnpm --filter nocodb build \
- && pnpm --filter nocodb install --prod --ignore-scripts \
  && test -f /build/packages/nocodb/docker/main.js
 
 # ╭――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――╮
