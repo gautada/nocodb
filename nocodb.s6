@@ -5,4 +5,4 @@
 # In production, set NC_DB to a PostgreSQL or MySQL connection string.
 export NC_PORT=8080
 export NC_DB="${NC_DB:-}"
-exec node /usr/app/dist/index.js
+exec node /usr/app/docker/main.js
