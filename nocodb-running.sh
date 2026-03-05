@@ -10,11 +10,11 @@ if [ -z "$HEALTH" ]; then
   exit 1
 fi
 
-STATUS=$(printf '%s' "$HEALTH" | jq -r '.status' 2>/dev/null)
+STATUS=$(printf '%s' "$HEALTH" | jq -r '.message // .status' 2>/dev/null | tr '[:upper:]' '[:lower:]')
 if [ "$STATUS" = "ok" ]; then
-  echo "nocodb-running: NocoDB is healthy (status=ok)"
+  echo "nocodb-running: NocoDB is healthy"
   exit 0
 fi
 
-echo "nocodb-running: NocoDB health check returned unexpected status: $HEALTH"
+echo "nocodb-running: NocoDB health check returned unexpected response: $HEALTH"
 exit 1

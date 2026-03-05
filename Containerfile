@@ -10,6 +10,8 @@ ARG CONTAINER_VERSION=13.3
 # ╰――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――╯
 FROM node:20-bookworm AS builder
 
+ENV CI=true
+
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git jq curl python3 make g++ \
  && rm -rf /var/lib/apt/lists/*
@@ -34,7 +36,7 @@ RUN IMAGE_VERSION=$(curl -sL "https://api.github.com/repos/nocodb/nocodb/release
 RUN pnpm install --frozen-lockfile \
  && pnpm --filter nocodb-sdk build \
  && pnpm --filter nocodb build \
- && pnpm --filter nocodb install --prod --ignore-scripts
+ && test -f /build/packages/nocodb/docker/main.js
 
 # ╭――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――╮
 # │ STAGE 2: Final container image                                           │
@@ -75,9 +77,9 @@ RUN /usr/sbin/usermod -l $USER debian \
 # ╭――――――――――――――――――――╮
 # │ APPLICATION        │
 # ╰――――――――――――――――――――╯
-# Copy the built nocodb dist and production node_modules from the build stage.
-COPY --from=builder /build/packages/nocodb/dist    /usr/app/dist
-COPY --from=builder /build/packages/nocodb/node_modules /usr/app/node_modules
+# Copy the built nocodb docker bundle and production node_modules from the build stage.
+COPY --from=builder /build/packages/nocodb/docker /usr/app/docker
+COPY --from=builder /build/node_modules /usr/app/node_modules
 COPY --from=builder /build/packages/nocodb/package.json /usr/app/package.json
 
 # Create data directory for SQLite default backend and set ownership.
