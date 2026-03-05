@@ -1,0 +1,74 @@
+
+# RUN cp $GOPATH/bin/litestream /usr/src/lt
+# && git clone --branch "v${IMAGE_VERSION}" --depth 1 https://github.com/nocodb/nocodb.git
+# RUN git config --global advice.detachedHead false \
+#  && git config --global --add safe.directory /opt \
+#  && git clone --branch "v${IMAGE_VERSION}" --depth 1 https://github.com/nocodb/nocodb.git
+# WORKDIR /opt/nocodb
+
+# FROM docker.io/gautada/alpine:$ALPINE_VERSION as container
+
+# ╭――――――――――――――――――――╮
+# │ USERS              │
+# ╰――――――――――――――――――――╯
+ARG USER=nocodb
+# Set shell to /bin/ash and enable pipefail for Alpine-based images
+# SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+RUN /usr/sbin/usermod -l $USER alpine \
+ && /usr/sbin/usermod -d /home/$USER -m $USER \
+ && /usr/sbin/groupmod -n $USER alpine \
+ && /bin/echo "$USER:$USER" | /usr/sbin/chpasswd
+
+# ╭―
+# │ PRIVILEGES
+# ╰――――――――――――――――――――
+# COPY privileges /etc/container/privileges
+
+# ╭―
+# │ BACKUP
+# ╰――――――――――――――――――――
+# COPY backup /etc/container/backup
+
+# ╭――――――――――――――――――――╮
+# │ METADATA           │
+# ╰――――――――――――――――――――╯
+LABEL org.opencontainers.image.title="${IMAGE_NAME}"
+LABEL org.opencontainers.image.description="A nocodb container."
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/gautada/nocodb"
+LABEL org.opencontainers.image.source="https://github.com/gautada/nocodb"
+LABEL org.opencontainers.image.version="${IMAGE_VERSION}"
+LABEL org.opencontainers.image.license="Upstream"
+
+# ╭―
+# │ ENTRYPOINT
+# ╰――――――――――――――――――――
+COPY entrypoint.sh /etc/container/entrypoint
+
+# ╭―
+# │ APPLICATION
+# ╰――――――――――――――――――――
+RUN chown -R $USER:$USER /opt/nocodb
+WORKDIR /
+# curl -sL https://taskfile.dev/install.sh | sh
+# ./bin/task -t Taskfile.yml deps
+# RUN /bin/sed -i 's|dl-cdn.alpinelinux.org/alpine/|mirror.math.princeton.edu/pub/alpinelinux/|g' /etc/apk/repositories \
+#  && /sbin/apk add --no-cache ansible openssh
+# COPY --from=build /opt/semaphore/bin/semaphore /opt/semaphore/semaphore
+# RUN /bin/ln -fsv /opt/semaphore/semaphore /usr/bin/semaphore \
+#  && /bin/ln -fsv /mnt/volumes/configmaps/config.json /home/$USER/config.json \
+#  && mkdir -p /home/$USER/data 
+# /bin/ln -fsv /mnt/volumes/container /home/$USER/data
+
+# ╭―
+# │ CONFIGURATION
+# ╰――――――――――――――――――――
+RUN chown -R $USER:$USER /home/$USER
+USER $USER
+VOLUME /mnt/volumes/backup
+VOLUME /mnt/volumes/configmaps
+VOLUME /mnt/volumes/container
+VOLUME /mnt/volumes/secrets
+VOLUME /mnt/volumes/logs
+VOLUME /mnt/volumes/source
+EXPOSE 8080/tcp
+WORKDIR /home/$USER

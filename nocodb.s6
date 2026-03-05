@@ -1,0 +1,8 @@
+#!/bin/sh
+# s6 service: starts NocoDB on port 8080.
+# When NC_DB is not set, NocoDB defaults to a SQLite backend at
+# /mnt/volumes/data/noco.db — suitable for CI and standalone use.
+# In production, set NC_DB to a PostgreSQL or MySQL connection string.
+export NC_PORT=8080
+export NC_DB="${NC_DB:-}"
+exec node /usr/app/dist/index.js
