@@ -16,6 +16,8 @@ RUN apt-get update \
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
+ENV CI=true
+
 WORKDIR /build
 
 # Resolve the latest NocoDB release tag and clone at that version.
