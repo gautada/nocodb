@@ -5,4 +5,5 @@
 # In production, set NC_DB to a PostgreSQL or MySQL connection string.
 export NC_PORT=8080
 export NC_DB="${NC_DB:-}"
+export NC_AUTH_JWT_SECRET="${NC_AUTH_JWT_SECRET:-}"
 exec node /usr/app/docker/main.js
