@@ -41,3 +41,29 @@ volumeMounts:
 ### Migration
 
 If migrating from an existing SQLite installation to PostgreSQL, export your data from NocoDB's admin panel before switching databases. There is no automatic migration path.
+
+## Authentication
+
+By default, NocoDB runs in **public mode** — the web UI is accessible without a login. To require user authentication, set the `NC_AUTH_JWT_SECRET` environment variable:
+
+```yaml
+# Kubernetes deployment example
+env:
+  - name: NC_AUTH_JWT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: nocodb-secrets
+        key: jwt-secret
+```
+
+Or with Docker:
+```bash
+docker run -d \
+  -p 8080:8080 \
+  -e NC_AUTH_JWT_SECRET="your-secret-key-here" \
+  gautada/nocodb
+```
+
+When `NC_AUTH_JWT_SECRET` is set, NocoDB enables JWT-based authentication. Users must sign in before accessing any data. If the variable is empty or unset, NocoDB defaults to public mode.
+
+> **Security note:** Always set `NC_AUTH_JWT_SECRET` in production deployments. Use a strong random value (e.g., `openssl rand -hex 32`).
